@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>track - forex</title>
+    <style>
+        table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+            
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            </style>
+</head>
+
+<body>
+    <a href="index.html">BACK</a><br>
+    <form id="form">
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Input</th>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td><input type="text" name="date" id="date" placeholder="ex: 2018-11-13" required></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="Track" id="btn">
+    </form>
+    <br><br>
+    <table id="rest">
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Rate</th>
+            <th>7-day avg</th>
+        </tr>
+    </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $("#form").submit(function (e) {
+            e.preventDefault()
+            var date = $('#date').val()
+            var req = new XMLHttpRequest()
+            req.open('GET', `http://localhost/api/track?date=${date}`)
+            req.onload = function () {
+                var res = JSON.parse(req.responseText)
+                render(res)
+            }
+            req.send()
+        })
+
+        function render(data) {
+            var rest = document.getElementById('rest')
+            var buf = ''
+            data.forEach(element => {
+                if (element['rate7'] !== 0) {
+                    rest.insertAdjacentHTML('beforeend',
+                        `
+                    <tr>
+                        <td>${element['from']}</td>
+                        <td>${element['to']}</td>
+                        <td>${element['rate']}</td>
+                        <td>${element['rate7']}</td>
+                    </tr>
+                    `
+                    )
+                } else {
+                    rest.insertAdjacentHTML('beforeend',
+                        `
+                    <tr>
+                        <td>${element['from']}</td>
+                        <td>${element['to']}</td>
+                        <td><i>insufficient data</i></td>
+                        <td></td>
+                    </tr>
+                    `
+                    )
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

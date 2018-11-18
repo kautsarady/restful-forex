@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>trend - forex</title>
+    <style>
+        table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+                </style>
+</head>
+
+<body>
+    <a href="index.html">BACK</a><br>
+    <form id="form">
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Input</th>
+            </tr>
+            <tr>
+                <td>From</td>
+                <td><input type="text" name="from" id="from" placeholder="ex: USD" required></td>
+            </tr>
+            <tr>
+                <td>To</td>
+                <td><input type="text" name="to" id="to" placeholder="ex: EUR" required></td>
+            </tr>
+            <tr>
+                <td>Average</td>
+                <td><input type="text" name="avg" id="avg" placeholder="ex: 1.0" required></td>
+            </tr>
+            <tr>
+                <td>Variance</td>
+                <td><input type="text" name="vrn" id="vrn" placeholder="ex: 0.1" required></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="Track" id="btn">
+    </form>
+    <br><br>
+    <table id="rest">
+        <tr>
+            <th>Date</th>
+            <th>Rate</th>
+        </tr>
+    </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $("#form").submit(function (e) {
+            e.preventDefault()
+            var from = $('#from').val()
+            var to = $('#to').val()
+            var avg = $('#avg').val()
+            var vrn = $('#vrn').val()
+            var req = new XMLHttpRequest()
+            req.open('GET', `http://localhost/api/trend/${from}/${to}?avg=${avg}&vrn=${vrn}`)
+            req.onload = function () {
+                var res = JSON.parse(req.responseText)
+                var rest = document.getElementById('rest')
+                render(res)
+            }
+            req.send()
+        })
+
+        function render(data) {
+            var rest = document.getElementById('rest')
+            var buf = ''
+            data.forEach(element => {
+                rest.insertAdjacentHTML('beforeend',
+                    `
+                    <tr>
+                        <td>${element['date']}</td>
+                        <td>${element['rate']}</td>
+                    </tr>
+                    `
+                )
+            });
+        }
+    </script>
+</body>
+
+</html>

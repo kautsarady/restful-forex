@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: forex
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: kavedeveloper
+    ports:
+      - 5432:5432
+    restart: always
+  app:
+    image: gcr.io/kautsarady-forex-gcr/forex_image
+    environment:
+      PORT: 8080
+      # GIN_MODE: release
+      DB_DRIVER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DBNAME: forex
+      DB_USER: admin
+      DB_PASSWORD: kavedeveloper
+    ports:
+      - 80:8080
+    depends_on:
+      - db
+    restart: always

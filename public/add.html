@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>add - forex</title>
+    <style>
+            table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                    
+                    td, th {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    </style>
+</head>
+
+<body>
+    <a href="index.html">BACK</a><br>
+    <form id="form">
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Input</th>
+            </tr>
+            <tr>
+                <td>From</td>
+                <td><input type="text" name="from" id="from" placeholder="ex: AUD" required></td>
+            </tr>
+            <tr>
+                <td>To</td>
+                <td><input type="text" name="to" id="to" placeholder="ex: USD" required></td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="Submit" id="btn">
+    </form>
+    <div id="resc"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $("#form").submit(function (e) {
+            e.preventDefault()
+            var from = $('#from').val()
+            var to = $('#to').val()
+            var req = new XMLHttpRequest()
+            req.open('POST', `http://localhost/api/add/${from}/${to}`)
+            req.onload = function () {
+                var res = JSON.parse(req.responseText)
+                var resc = document.getElementById('resc')
+                resc.insertAdjacentHTML('beforeend', `Message: ${res['message']}`)
+            }
+            req.send()
+        })
+    </script>
+</body>
+
+</html>

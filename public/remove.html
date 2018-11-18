@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>remove - forex</title>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html">BACK</a><br>
+    <form id="form">
+        <table id="t">
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Delete</th>
+            </tr>
+        </table>
+        <br>
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        var req = new XMLHttpRequest();
+        var container = document.getElementById('t')
+        req.open('GET', 'http://localhost/api/track?date=2018-12-31')
+        req.onload = function () {
+            var res = JSON.parse(req.responseText)
+            render(res)
+        }
+        req.send()
+
+        function render(data) {
+            if (data == null) {
+                return
+            }
+            var buf = ''
+            data.forEach(element => {
+                buf += itemTemplate(element)
+            });
+            container.insertAdjacentHTML('beforeend', buf)
+        }
+
+        function itemTemplate(data) {
+            return `
+            <tr>
+                <td>${data['from']}</td>
+                <td>${data['to']}</td>
+                <td><a href="#" id="${data['from']}-${data['to']}" onclick="del(this);">[ ]</a></td>
+            </tr>
+            `
+        }
+
+        function del(el) {
+            var id = el.id
+            var strarr = id.split("-")
+            req.open('DELETE', `http://localhost/api/remove/${strarr[0]}/${strarr[1]}`)
+            req.send()
+            location.reload(true)
+        }
+    </script>
+</body>
+
+</html>

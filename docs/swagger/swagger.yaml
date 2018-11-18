@@ -1,0 +1,209 @@
+basePath: '{{.BasePath}}'
+definitions:
+  httputil.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  model.Exchange:
+    properties:
+      date:
+        example: "2016-02-01"
+        type: string
+      from:
+        example: USD
+        type: string
+      rate:
+        example: 14967.667
+        type: number
+      rate7:
+        example: 0.233
+        type: number
+      to:
+        example: IDR
+        type: string
+    type: object
+host: '{{.Host}}'
+info:
+  contact:
+    email: kautsarady@gmail.com
+    name: kautsarady
+  description: This foreign currency exchange api documentation
+  license: {}
+  title: Foreign Currency Exchange API
+  version: "1.0"
+paths:
+  /api/add/{from}/{to}:
+    post:
+      consumes:
+      - application/json
+      operationId: add-forex
+      parameters:
+      - description: 'FROM currency ex: USD'
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: 'TO currency ex: JPY'
+        in: path
+        name: to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: adding exchange data $from - $to success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Add foreign currency exchange
+  /api/input/{from}/{to}:
+    post:
+      consumes:
+      - application/json
+      operationId: input-forex
+      parameters:
+      - description: 'FROM currency ex: USD'
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: 'TO currency ex: JPY'
+        in: path
+        name: to
+        required: true
+        type: string
+      - description: 'forex rate ex: 1.11'
+        format: number
+        in: query
+        name: rate
+        required: true
+        type: string
+      - description: 'forex date ex: 2018-11-13'
+        format: date
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: input exchange data $from - $to success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Input foreign currency exchange
+  /api/remove/{from}/{to}:
+    delete:
+      consumes:
+      - application/json
+      operationId: remove-forex
+      parameters:
+      - description: 'FROM currency ex: USD'
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: 'TO currency ex: JPY'
+        in: path
+        name: to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: removing exchange data $from - $to success
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Remove foreign currency exchange
+  /api/track:
+    get:
+      consumes:
+      - application/json
+      operationId: track-forex
+      parameters:
+      - description: 'forex date ex: 2018-11-13'
+        format: date
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Exchange'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Track foreign currency exchange
+  /api/trend/{from}/{to}:
+    get:
+      consumes:
+      - application/json
+      operationId: trend-forex
+      parameters:
+      - description: 'FROM currency ex: USD'
+        in: path
+        name: from
+        required: true
+        type: string
+      - description: 'TO currency ex: JPY'
+        in: path
+        name: to
+        required: true
+        type: string
+      - description: 'average rate ex: 1.133'
+        format: number
+        in: query
+        name: avg
+        required: true
+        type: string
+      - description: 'variance rate ex: 0.333'
+        format: number
+        in: query
+        name: vrn
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Exchange'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HTTPError'
+            type: object
+      summary: Show trend of foreign currency exchange
+swagger: "2.0"
