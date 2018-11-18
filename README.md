@@ -46,6 +46,8 @@ The webpage of api docs served at `http://localhost/api/docs`
 
 ![img](https://i.imgur.com/ds4k7tx.png)
 
+## Database model
+To fullfil all the API requirement, table `history` (from `varchar`, to `varchar`, rate `real`, date `date`) is used. All the operation will be funneled into 1 table
 
 ## Test Case
 These are workaround to cover all api test cases
@@ -74,3 +76,11 @@ application/json"
 ```sh
 $ curl -X DELETE "http://localhost:8080/api/remove/AUD/USD" -H "accept: application/json"
 ```
+These api test have been covered up in test package along with db model
+
+## Note
+- docker-compose can't really control when to boot the app container, thats why I put restart as always in app service so the connection to db always retried until database ready to accept connection
+- Before running the test package, the database and the environment variable should be well defined
+- The app image hosted in google container registry, but the multistaged-build still can be observed in Dockerfile
+- I use packr to bundle the static files so it compiled into binary in build time
+- I use swagger (swaggo) annotation for documenting all functionality
