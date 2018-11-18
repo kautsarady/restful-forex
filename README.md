@@ -53,28 +53,28 @@ To fullfil all the API requirement, table `history` (from `varchar`, to `varchar
 These are workaround to cover all api test cases
 - Add
 ```sh
-$ curl -X POST "http://localhost:8080/api/add/JMC/JPY" -H "accept: application/json"
+$ curl -X POST "http://localhost/api/add/JMC/JPY" -H "accept: application/json"
 ```
 - Remove
 ```sh
-$ curl -X DELETE "http://localhost:8080/api/remove/JMC/JPY" -H "accept: application/json"
+$ curl -X DELETE "http://localhost/api/remove/JMC/JPY" -H "accept: application/json"
 ```
 - Track
 ```sh
-$ curl -X GET "http://localhost:8080/api/track?date=2018-11-13" -H "accept: application/json"
+$ curl -X GET "http://localhost/api/track?date=2018-11-13" -H "accept: application/json"
 ```
 - Trend
 ```sh
-$ curl -X GET "http://localhost:8080/api/trend/USD/EUR?avg=1.0&vrn=0.1" -H "accept: application/json"
+$ curl -X GET "http://localhost/api/trend/USD/EUR?avg=1.0&vrn=0.1" -H "accept: application/json"
 ```
 - Input
 ```sh
-$ curl -X POST "http://localhost:8080/api/input/AUD/USD?rate=0.73&date=2018-11-16" -H "accept: 
+$ curl -X POST "http://localhost/api/input/AUD/USD?rate=0.73&date=2018-11-16" -H "accept: 
 application/json"
 ```
 - Remove
 ```sh
-$ curl -X DELETE "http://localhost:8080/api/remove/AUD/USD" -H "accept: application/json"
+$ curl -X DELETE "http://localhost/api/remove/AUD/USD" -H "accept: application/json"
 ```
 These api test have been covered up in test package along with db model
 
