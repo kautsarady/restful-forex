@@ -12,31 +12,38 @@ This will spin docker compose chain tooling, to build, pull, and run necessary i
 The webpage served at `http://localhost/web`
 - Landing Page
 <br>
+
 ![img](https://i.imgur.com/g1ZwAbw.png)
 
 - Input Page
 <br>
+
 ![img](https://i.imgur.com/mkWqN0L.png)
 
 - Track Page
 <br>
+
 ![img](https://i.imgur.com/MqH9ld6.png)
 
 - Trend Page
 <br>
+
 ![img](https://i.imgur.com/BVngeQb.png)
 
 - Add Page
 <br>
+
 ![img](https://i.imgur.com/xgIFPzf.png)
 
 - Remove Page
 <br>
+
 ![img](https://i.imgur.com/MZcp43O.png)
 
 ## API docs
 The webpage of api docs served at `http://localhost/api/docs`
 <br>
+
 ![img](https://i.imgur.com/ds4k7tx.png)
 
 
