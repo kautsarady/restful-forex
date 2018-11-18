@@ -1,27 +1,56 @@
-PORT=8080
-DB_DRIVER=postgres
-DB_HOST=fxpg
-DB_PORT=5432
-DB_DBNAME=forex
-DB_USER=admin
-DB_PASSWORD=kavedeveloper
+# restful-forex
+restful, tested, fully documented, container based golang application
 
-# valid test
-* add
-- curl -X POST "http://localhost:8080/api/add/JMC/JPY" -H "accept: application/json"
-* remove
-- curl -X DELETE "http://localhost:8080/api/remove/JMC/JPY" -H "accept: application/json"
-* track
-- curl -X GET "http://localhost:8080/api/track?date=2018-11-13" -H "accept: application/json"
-* trend
-- curl -X GET "http://localhost:8080/api/trend/USD/EUR?avg=1.0&vrn=0.1" -H "accept: application/json"
-* input
-- curl -X POST "http://localhost:8080/api/input/AUD/USD?rate=0.73&date=2018-11-16" -H "accept: application/json"
-* remove
-- curl -X DELETE "http://localhost:8080/api/remove/AUD/USD" -H "accept: application/json"
+## quick start
+```sh
+$ docker-compose up
+```
+This will spin docker compose chain tooling, to build, pull, and run necessary image as container. When this log appear for the last time, the application is ready to go.
+> LOG:  database system is ready to accept connections
 
-TODO:
-• provide all env var in dockerfile (not in .env), need refactor
-• add always restart to forex app
+## web page
+The webpage served at `http://localhost/web`
+- Landing page
+![img](https://imgur.com/g1ZwAbw)
+- Input page
+![img](https://imgur.com/mkWqN0L)
+- Track page
+![img](https://imgur.com/MqH9ld6)
+- Trend page
+![img](https://imgur.com/BVngeQb)
+- Add page
+![img](https://imgur.com/xgIFPzf)
+- Remove page
+![img](https://imgur.com/MZcp43O)
 
-docker run --name fxpg --hostname fxpg -p 5432:5432 -e POSTGRES_PASSWORD=kavedeveloper -e POSTGRES_DB=forex -e POSTGRES_USER=admin -d postgres
+## test case
+These are workaround to cover all api test cases
+- add
+```sh
+$ curl -X POST "http://localhost:8080/api/add/JMC/JPY" -H "accept: application/json"
+```
+- remove
+```sh
+$ curl -X DELETE "http://localhost:8080/api/remove/JMC/JPY" -H "accept: application/json"
+```
+- track
+```sh
+$ curl -X GET "http://localhost:8080/api/track?date=2018-11-13" -H "accept: application/json"
+```
+- trend
+```sh
+$ curl -X GET "http://localhost:8080/api/trend/USD/EUR?avg=1.0&vrn=0.1" -H "accept: application/json"
+```
+- input
+```sh
+$ curl -X POST "http://localhost:8080/api/input/AUD/USD?rate=0.73&date=2018-11-16" -H "accept: 
+application/json"
+```
+- remove
+```sh
+$ curl -X DELETE "http://localhost:8080/api/remove/AUD/USD" -H "accept: application/json"
+```
+
+## api docs
+The webpage of api docs served at `http://localhost/api/docs`
+![img](https://imgur.com/ds4k7tx)
