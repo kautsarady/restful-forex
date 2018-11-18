@@ -47,7 +47,7 @@ The webpage of api docs served at `http://localhost/api/docs`
 ![img](https://i.imgur.com/ds4k7tx.png)
 
 ## Database model
-To fullfil all the API requirement, table `history` (from `varchar`, to `varchar`, rate `real`, date `date`) is used. All the operation will be funneled into 1 table
+To fullfil all the API requirement, table `history` (from `varchar`, to `varchar`, rate `real`, date `date`) is defined. All the operation will be funneled into 1 table
 
 ## Test Case
 These are workaround to cover all api test cases
