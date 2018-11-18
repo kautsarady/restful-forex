@@ -1,56 +1,69 @@
 # restful-forex
 restful, tested, fully documented, container based golang application
 
-## quick start
+## Quick Start
 ```sh
 $ docker-compose up
 ```
 This will spin docker compose chain tooling, to build, pull, and run necessary image as container. When this log appear for the last time, the application is ready to go.
 > LOG:  database system is ready to accept connections
 
-## web page
+## Web Page
 The webpage served at `http://localhost/web`
-- Landing page
-![img](https://imgur.com/g1ZwAbw)
-- Input page
-![img](https://imgur.com/mkWqN0L)
-- Track page
-![img](https://imgur.com/MqH9ld6)
-- Trend page
-![img](https://imgur.com/BVngeQb)
-- Add page
-![img](https://imgur.com/xgIFPzf)
-- Remove page
-![img](https://imgur.com/MZcp43O)
+- Landing Page
+<br>
+![img](https://i.imgur.com/g1ZwAbw.png)
 
-## test case
+- Input Page
+<br>
+![img](https://i.imgur.com/mkWqN0L.png)
+
+- Track Page
+<br>
+![img](https://i.imgur.com/MqH9ld6.png)
+
+- Trend Page
+<br>
+![img](https://i.imgur.com/BVngeQb.png)
+
+- Add Page
+<br>
+![img](https://i.imgur.com/xgIFPzf.png)
+
+- Remove Page
+<br>
+![img](https://i.imgur.com/MZcp43O.png)
+
+## API docs
+The webpage of api docs served at `http://localhost/api/docs`
+<br>
+![img](https://i.imgur.com/ds4k7tx.png)
+
+
+## Test Case
 These are workaround to cover all api test cases
-- add
+- Add
 ```sh
 $ curl -X POST "http://localhost:8080/api/add/JMC/JPY" -H "accept: application/json"
 ```
-- remove
+- Remove
 ```sh
 $ curl -X DELETE "http://localhost:8080/api/remove/JMC/JPY" -H "accept: application/json"
 ```
-- track
+- Track
 ```sh
 $ curl -X GET "http://localhost:8080/api/track?date=2018-11-13" -H "accept: application/json"
 ```
-- trend
+- Trend
 ```sh
 $ curl -X GET "http://localhost:8080/api/trend/USD/EUR?avg=1.0&vrn=0.1" -H "accept: application/json"
 ```
-- input
+- Input
 ```sh
 $ curl -X POST "http://localhost:8080/api/input/AUD/USD?rate=0.73&date=2018-11-16" -H "accept: 
 application/json"
 ```
-- remove
+- Remove
 ```sh
 $ curl -X DELETE "http://localhost:8080/api/remove/AUD/USD" -H "accept: application/json"
 ```
-
-## api docs
-The webpage of api docs served at `http://localhost/api/docs`
-![img](https://imgur.com/ds4k7tx)
