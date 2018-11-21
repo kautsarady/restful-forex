@@ -31,15 +31,15 @@ type Controller struct {
 
 // Make api controller
 func Make(dao *model.DAO) *Controller {
-	ctr := &Controller{DAO: dao, Router: gin.Default()}
+	ctr := &Controller{dao, gin.Default()}
 	api := ctr.Router.Group("/api")
 	{
 		api.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		api.POST("/input/:from/:to", ctr.HandleInput())
-		api.GET("/track", ctr.HandleTrack())
-		api.GET("/trend/:from/:to", ctr.HandleTrend())
-		api.POST("/add/:from/:to", ctr.HandleAdd())
-		api.DELETE("/remove/:from/:to", ctr.HandleRemove())
+		api.POST("/input/:from/:to", ctr.HandleInput)
+		api.GET("/track", ctr.HandleTrack)
+		api.GET("/trend/:from/:to", ctr.HandleTrend)
+		api.POST("/add/:from/:to", ctr.HandleAdd)
+		api.DELETE("/remove/:from/:to", ctr.HandleRemove)
 	}
 	return ctr
 }
@@ -56,66 +56,64 @@ func Make(dao *model.DAO) *Controller {
 // @Success 200 {string} string	"input exchange data $from - $to success"
 // @Failure 400 {object} httputil.HTTPError
 // @Router /api/input/{from}/{to} [post]
-func (ctr *Controller) HandleInput() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (ctr *Controller) HandleInput(ctx *gin.Context) {
 
-		from := strings.ToUpper(ctx.Param("from"))
-		to := strings.ToUpper(ctx.Param("to"))
+	from := strings.ToUpper(ctx.Param("from"))
+	to := strings.ToUpper(ctx.Param("to"))
 
-		strRate, ok := ctx.GetQuery("rate")
-		if !ok {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide form key-value \"rate\""))
-			return
-		}
-
-		strDate, ok := ctx.GetQuery("date")
-		if !ok {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide form key-value \"date\""))
-			return
-		}
-
-		// Parsing "rate" (string) to float
-		rate, err := strconv.ParseFloat(strRate, 64)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"rate\" is not a valid number: "+err.Error()))
-			return
-		}
-
-		// Parsing "date" (string) to time
-		date, err := time.Parse("2006-01-02", strDate)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found date is not a valid time/date format: "+err.Error()))
-			return
-		}
-
-		// Input for currency A to B with rate = R
-		if err := ctr.DAO.Input(
-			model.Exchange{
-				From: from,
-				To:   to,
-				Rate: rate,
-				Date: date,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		// Input for currency B to A with rate = 1/R
-		if err := ctr.DAO.Input(
-			model.Exchange{
-				From: to,
-				To:   from,
-				Rate: 1 / rate,
-				Date: date,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("input exchange data %s - %s success", from, to)})
+	strRate, ok := ctx.GetQuery("rate")
+	if !ok {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide form key-value \"rate\""))
+		return
 	}
+
+	strDate, ok := ctx.GetQuery("date")
+	if !ok {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide form key-value \"date\""))
+		return
+	}
+
+	// Parsing "rate" (string) to float
+	rate, err := strconv.ParseFloat(strRate, 64)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"rate\" is not a valid number: "+err.Error()))
+		return
+	}
+
+	// Parsing "date" (string) to time
+	date, err := time.Parse("2006-01-02", strDate)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found date is not a valid time/date format: "+err.Error()))
+		return
+	}
+
+	// Input for currency A to B with rate = R
+	if err := ctr.DAO.Input(
+		model.Exchange{
+			From: from,
+			To:   to,
+			Rate: rate,
+			Date: date,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	// Input for currency B to A with rate = 1/R
+	if err := ctr.DAO.Input(
+		model.Exchange{
+			From: to,
+			To:   from,
+			Rate: 1 / rate,
+			Date: date,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("input exchange data %s - %s success", from, to)})
 }
 
 // HandleTrack godoc
@@ -127,31 +125,29 @@ func (ctr *Controller) HandleInput() gin.HandlerFunc {
 // @Success 200 {array} model.Exchange
 // @Failure 400 {object} httputil.HTTPError
 // @Router /api/track [get]
-func (ctr *Controller) HandleTrack() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (ctr *Controller) HandleTrack(ctx *gin.Context) {
 
-		strDate, ok := ctx.GetQuery("date")
-		if !ok {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"date\" (format: yyyy-mm-dd) to be tracked"))
-			return
-		}
-
-		// Parsing "date" (string) to time
-		date, err := time.Parse("2006-01-02", strDate)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found date is not a valid time/date format: "+err.Error()))
-			return
-		}
-
-		exs, err := ctr.DAO.Track(date)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		ctx.JSON(http.StatusOK, exs)
+	strDate, ok := ctx.GetQuery("date")
+	if !ok {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"date\" (format: yyyy-mm-dd) to be tracked"))
+		return
 	}
+
+	// Parsing "date" (string) to time
+	date, err := time.Parse("2006-01-02", strDate)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found date is not a valid time/date format: "+err.Error()))
+		return
+	}
+
+	exs, err := ctr.DAO.Track(date)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, exs)
 }
 
 // HandleTrend godoc
@@ -166,52 +162,50 @@ func (ctr *Controller) HandleTrack() gin.HandlerFunc {
 // @Success 200 {array} model.Exchange
 // @Failure 400 {object} httputil.HTTPError
 // @Router /api/trend/{from}/{to} [get]
-func (ctr *Controller) HandleTrend() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (ctr *Controller) HandleTrend(ctx *gin.Context) {
 
-		from := strings.ToUpper(ctx.Param("from"))
-		to := strings.ToUpper(ctx.Param("to"))
+	from := strings.ToUpper(ctx.Param("from"))
+	to := strings.ToUpper(ctx.Param("to"))
 
-		strAvg, ok := ctx.GetQuery("avg")
-		if !ok {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"avg\""))
-			return
-		}
-
-		strVrn, ok := ctx.GetQuery("vrn")
-		if !ok {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"vrn\""))
-			return
-		}
-
-		// Parsing "avg" (string) to float
-		avg, err := strconv.ParseFloat(strAvg, 64)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"avg\" is not a valid number: "+err.Error()))
-			return
-		}
-
-		// Parsing "vrn" (string) to float
-		vrn, err := strconv.ParseFloat(strVrn, 64)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"vrn\" is not a valid number: "+err.Error()))
-			return
-		}
-
-		exs, err := ctr.DAO.Trend(from, to, avg-vrn)
-		if err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		if exs == nil {
-			httputil.NewError(ctx, http.StatusSeeOther, errors.New("there is no correspond data found"))
-			return
-		}
-
-		ctx.JSON(http.StatusOK, exs)
+	strAvg, ok := ctx.GetQuery("avg")
+	if !ok {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"avg\""))
+		return
 	}
+
+	strVrn, ok := ctx.GetQuery("vrn")
+	if !ok {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Should provide query \"vrn\""))
+		return
+	}
+
+	// Parsing "avg" (string) to float
+	avg, err := strconv.ParseFloat(strAvg, 64)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"avg\" is not a valid number: "+err.Error()))
+		return
+	}
+
+	// Parsing "vrn" (string) to float
+	vrn, err := strconv.ParseFloat(strVrn, 64)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusBadRequest, errors.New("Found \"vrn\" is not a valid number: "+err.Error()))
+		return
+	}
+
+	exs, err := ctr.DAO.Trend(from, to, avg-vrn)
+	if err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	if exs == nil {
+		httputil.NewError(ctx, http.StatusSeeOther, errors.New("there is no correspond data found"))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, exs)
 }
 
 // HandleAdd godoc
@@ -224,36 +218,34 @@ func (ctr *Controller) HandleTrend() gin.HandlerFunc {
 // @Success 200 {string} string	"adding exchange data $from - $to success"
 // @Failure 400 {object} httputil.HTTPError
 // @Router /api/add/{from}/{to} [post]
-func (ctr *Controller) HandleAdd() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (ctr *Controller) HandleAdd(ctx *gin.Context) {
 
-		from := strings.ToUpper(ctx.Param("from"))
-		to := strings.ToUpper(ctx.Param("to"))
+	from := strings.ToUpper(ctx.Param("from"))
+	to := strings.ToUpper(ctx.Param("to"))
 
-		// Add forex from A to B
-		if err := ctr.DAO.Add(
-			model.Exchange{
-				From: from,
-				To:   to,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		// Add forex from B to A
-		if err := ctr.DAO.Add(
-			model.Exchange{
-				From: to,
-				To:   from,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("adding exchange data %s - %s success", from, to)})
+	// Add forex from A to B
+	if err := ctr.DAO.Add(
+		model.Exchange{
+			From: from,
+			To:   to,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
 	}
+
+	// Add forex from B to A
+	if err := ctr.DAO.Add(
+		model.Exchange{
+			From: to,
+			To:   from,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("adding exchange data %s - %s success", from, to)})
 }
 
 // HandleRemove godoc
@@ -266,34 +258,32 @@ func (ctr *Controller) HandleAdd() gin.HandlerFunc {
 // @Success 200 {string} string	"removing exchange data $from - $to success"
 // @Failure 400 {object} httputil.HTTPError
 // @Router /api/remove/{from}/{to} [delete]
-func (ctr *Controller) HandleRemove() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func (ctr *Controller) HandleRemove(ctx *gin.Context) {
 
-		from := strings.ToUpper(ctx.Param("from"))
-		to := strings.ToUpper(ctx.Param("to"))
+	from := strings.ToUpper(ctx.Param("from"))
+	to := strings.ToUpper(ctx.Param("to"))
 
-		// Remove forex from A to B
-		if err := ctr.DAO.Remove(
-			model.Exchange{
-				From: from,
-				To:   to,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		// Remove forex from B to A
-		if err := ctr.DAO.Remove(
-			model.Exchange{
-				From: to,
-				To:   from,
-			}); err != nil {
-			httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
-			ctx.Error(err)
-			return
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("removing exchange data %s - %s success", from, to)})
+	// Remove forex from A to B
+	if err := ctr.DAO.Remove(
+		model.Exchange{
+			From: from,
+			To:   to,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
 	}
+
+	// Remove forex from B to A
+	if err := ctr.DAO.Remove(
+		model.Exchange{
+			From: to,
+			To:   from,
+		}); err != nil {
+		httputil.NewError(ctx, http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("removing exchange data %s - %s success", from, to)})
 }

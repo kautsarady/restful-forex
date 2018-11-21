@@ -8,14 +8,12 @@ import (
 	"github.com/lib/pq"
 )
 
-// DAO data access object
-type DAO struct {
-	DB *sql.DB
-}
+// DAO .
+type DAO struct{ DB *sql.DB }
 
-// Make sql connection
-func Make(dbDriver, connStr string, withDummy bool) (*DAO, error) {
-	db, err := sql.Open(dbDriver, connStr)
+// Make .
+func Make(cs string, withDummy bool) (*DAO, error) {
+	db, err := sql.Open("postgres", cs)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +25,7 @@ func Make(dbDriver, connStr string, withDummy bool) (*DAO, error) {
 	return &DAO{db}, nil
 }
 
-// Track track DAO
+// Track .
 func (d *DAO) Track(date time.Time) ([]Exchange, error) {
 	rows, err := d.DB.Query("SELECT DISTINCT \"from\", \"to\" FROM history")
 	if err != nil {
@@ -96,7 +94,7 @@ func modEx(db *sql.DB, dateRng []string, ex *Exchange) {
 	}
 }
 
-// Input Exchange
+// Input .
 func (d *DAO) Input(ex Exchange) error {
 	_, err := d.DB.Exec("INSERT INTO history VALUES ($1, $2, $3, $4)",
 		ex.From, ex.To, ex.Rate, ex.Date)
@@ -106,7 +104,7 @@ func (d *DAO) Input(ex Exchange) error {
 	return nil
 }
 
-// Trend show trend
+// Trend .
 func (d *DAO) Trend(from, to string, rng float64) ([]Exchange, error) {
 	rows, err := d.DB.Query("SELECT \"date\", rate FROM history WHERE \"from\"=$1 AND \"to\"=$2 AND rate >= $3 ORDER BY \"date\" DESC LIMIT 7", from, to, rng)
 	if err != nil {
@@ -132,7 +130,7 @@ func (d *DAO) Trend(from, to string, rng float64) ([]Exchange, error) {
 	return exs, nil
 }
 
-// Add Exchange
+// Add .
 func (d *DAO) Add(ex Exchange) error {
 	_, err := d.DB.Exec("INSERT INTO history VALUES ($1, $2)", ex.From, ex.To)
 	if err != nil {
@@ -141,7 +139,7 @@ func (d *DAO) Add(ex Exchange) error {
 	return nil
 }
 
-// Remove Exchange
+// Remove .
 func (d *DAO) Remove(ex Exchange) error {
 	_, err := d.DB.Exec("DELETE FROM history WHERE \"from\"=$1 AND \"to\"=$2", ex.From, ex.To)
 	if err != nil {

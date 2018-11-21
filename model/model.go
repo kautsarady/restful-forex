@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Exchange struct/JSON rep
+// Exchange .
 type Exchange struct {
 	From  string    `json:"from" example:"USD"`
 	To    string    `json:"to" example:"IDR"`

@@ -8,11 +8,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/kautsarady/forex/api"
 	"github.com/kautsarady/forex/model"
-
-	"github.com/gin-gonic/gin"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +30,10 @@ func TestAPI(t *testing.T) {
 	}
 
 	// Make database connection
-	dao, err := model.Make(os.Getenv("DB_DRIVER"), fmtConnStr())
+	dao, err := model.Make(
+		fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
+			os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_DBNAME"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD")),
+		true)
 	if err != nil {
 		log.Fatalf("Failed to make database connection: %v", err)
 	}
@@ -55,13 +56,4 @@ func performRequest(r http.Handler, method, path string) *httptest.ResponseRecor
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
-}
-
-func fmtConnStr() string {
-	return fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_DBNAME"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"))
 }
