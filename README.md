@@ -41,7 +41,7 @@ The webpage served at `http://localhost/web`
 ![img](https://i.imgur.com/MZcp43O.png)
 
 ## API docs
-The webpage of api docs served at `http://localhost/api/docs`
+The webpage of api docs served at `http://localhost/api/docs/index.html`
 <br>
 
 ![img](https://i.imgur.com/ds4k7tx.png)
