@@ -13,6 +13,7 @@ services:
     image: gcr.io/kautsarady-forex-gcr/forex_image
     environment:
       PORT: 8080
+      DB_DRIVER: postgres
       DB_HOST: db
       DB_PORT: 5432
       DB_DBNAME: forex
