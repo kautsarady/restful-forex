@@ -10,9 +10,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	// doc.json
-	_ "github.com/kautsarady/forex/docs"
-	"github.com/kautsarady/forex/httputil"
-	"github.com/kautsarady/forex/model"
+	_ "github.com/kautsarady/restful-forex/docs"
+	"github.com/kautsarady/restful-forex/httputil"
+	"github.com/kautsarady/restful-forex/model"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )

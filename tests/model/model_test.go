@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kautsarady/forex/model"
+	"github.com/kautsarady/restful-forex/model"
 )
 
 func TestModel(t *testing.T) {

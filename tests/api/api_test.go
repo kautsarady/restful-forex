@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kautsarady/forex/api"
-	"github.com/kautsarady/forex/model"
+	"github.com/kautsarady/restful-forex/api"
+	"github.com/kautsarady/restful-forex/model"
 	"github.com/stretchr/testify/assert"
 )
 

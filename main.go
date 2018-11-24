@@ -6,9 +6,8 @@ import (
 	"os"
 
 	"github.com/gobuffalo/packr"
-	"github.com/kautsarady/forex/api"
-	"github.com/kautsarady/forex/model"
-
+	"github.com/kautsarady/restful-forex/api"
+	"github.com/kautsarady/restful-forex/model"
 	_ "github.com/lib/pq"
 )
 
