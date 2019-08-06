@@ -1,5 +1,3 @@
-# restful-forex
-restful, tested, fully documented, container based golang application
 
 ## Quick Start
 ```sh
